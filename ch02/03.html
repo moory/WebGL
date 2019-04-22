@@ -17,14 +17,26 @@
 <script src="../lib/webgl-debug.js"></script>
 <script src="../lib/cuon-utils.js"></script>
 <script>
+    const VSHADER_SOURCE =
+        'void main(){' +
+        'gl_Position=vec4(0.0,0.0,0.0,1.0);' +
+        'gl_PointSize=10.0;' +
+        '}'
+    const FSHADER_SOURCE =
+        'void main(){' +
+        'gl_FragColor=vec4(1.0,0.0,0.0,1.0);' +
+        '}'
     const canvas = document.getElementById('myCanvas')
     // const gl=canvas.getContext('webgl');
     const gl = getWebGLContext(canvas)
 
     if (gl) {
-        gl.clearColor(0, 0, 0, 1)
+        initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)//cuon-utils.js
+        gl.clearColor(0.0, 0.0, 0.0, 1.0)
 
         gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.drawArrays(gl.POINTS, 0, 1);
     } else {
         console.log('浏览器不支持WebGL')
     }
