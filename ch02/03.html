@@ -17,14 +17,16 @@
 <script src="../lib/webgl-debug.js"></script>
 <script src="../lib/cuon-utils.js"></script>
 <script>
+    // 顶点着色器（GLSE ES代码）
     const VSHADER_SOURCE =
         'void main(){' +
-        'gl_Position=vec4(0.0,0.0,0.0,1.0);' +
-        'gl_PointSize=10.0;' +
+        'gl_Position=vec4(0.0,0.0,0.0,1.0);' + //顶点位置，vec4表示由4个浮点数组成的矢量，vec4（）函数返回一个vec4对象。此处矢量为齐次坐标
+        'gl_PointSize=10.0;' + //顶点尺寸，必须是浮点数
         '}'
+    // 片元着色器
     const FSHADER_SOURCE =
         'void main(){' +
-        'gl_FragColor=vec4(1.0,0.0,0.0,1.0);' +
+        'gl_FragColor=vec4(1.0,0.0,0.0,1.0);' +//此处代表RGBA
         '}'
     const canvas = document.getElementById('myCanvas')
     // const gl=canvas.getContext('webgl');
@@ -35,7 +37,12 @@
         gl.clearColor(0.0, 0.0, 0.0, 1.0)
 
         gl.clear(gl.COLOR_BUFFER_BIT);
-
+        /*
+        *  gl.drawArrays(mode, first, count)
+        * mode：绘制的方式（常量：gl.POINT,gl.LINE....等）
+        * first：从哪个顶点开始绘制（int）
+        * count：绘制要用到几个顶点（int）
+        * */
         gl.drawArrays(gl.POINTS, 0, 1);
     } else {
         console.log('浏览器不支持WebGL')
