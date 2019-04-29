@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>webgl</title>
+    <style>
+        #myCanvas {
+            border: 1px solid purple;
+        }
+    </style>
+</head>
+<body>
+<canvas id="myCanvas" width="400" height="400">
+    请升级浏览器！
+</canvas>
+<script src="../lib/webgl-utils.js"></script>
+<script src="../lib/webgl-debug.js"></script>
+<script src="../lib/cuon-utils.js"></script>
+<script>
+    // 顶点着色器（GLSE ES代码）
+    const VSHADER_SOURCE =
+        'attribute vec4 a_Position;' + //存储限定符
+        'uniform vec4 u_Translation;'+
+        'void main(){' +
+        'gl_Position=a_Position+u_Translation;' +
+        'gl_PointSize=10.0;' +
+        '}'
+    // 片元着色器
+    const FSHADER_SOURCE =
+        'void main(){' +
+        'gl_FragColor=vec4(1.0,0.0,0.0,1.0);' +//此处代表RGBA
+        '}'
+    const canvas = document.getElementById('myCanvas')
+    // const gl=canvas.getContext('webgl');
+    const gl = getWebGLContext(canvas)
+
+    let Tx=0.5;
+    let Ty=0.5;
+    let Tz=0.0;
+
+    if (gl) {
+        initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)//cuon-utils.js
+
+        let n = initVertexBuffers(gl)
+
+        //获取uniform变量的存储位置
+        let u_Translation=gl.getUniformLocation(gl.program,'u_Translation')
+
+        // 将平移距离传输给顶点着色器
+        gl.uniform4f(u_Translation,Tx,Ty,Tz,0.0);//传入的是齐次坐标
+
+        gl.clearColor(0, 0, 0, 1)
+
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        // gl.drawArrays(gl.POINTS, 0, n);//点
+        // gl.drawArrays(gl.LINES, 0, n);//线段
+        // gl.drawArrays(gl.LINE_STRIP, 0, n);//线条
+        // gl.drawArrays(gl.LINE_LOOP, 0, n);//回路
+        gl.drawArrays(gl.TRIANGLES, 0, n);//三角形
+        // gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);//三角带
+        // gl.drawArrays(gl.TRIANGLE_FAN, 0, n);//三角扇
+
+    } else {
+        console.log('浏览器不支持WebGL')
+    }
+
+    function initVertexBuffers(gl) {
+        const vertices = new Float32Array([
+            0.0, 0.5, -0.5, -0.5, 0.5, -0.5
+        ])
+        let n = 3;
+
+        // 创建缓冲区对象
+        const vertexBuffer = gl.createBuffer();
+
+        // 将缓冲区对象绑定到目标
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+
+        // 向缓冲区对象写入数据
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+        const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+
+        // 将缓冲区对象分配给a_Position
+        gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+
+        // 连接a_Position变量与分配给它的缓冲区对象
+        gl.enableVertexAttribArray(a_Position);
+
+        return n;
+
+    }
+
+
+</script>
+</body>
+</html>
