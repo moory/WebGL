@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>webgl</title>
+    <style>
+        #myCanvas {
+            border: 1px solid purple;
+        }
+    </style>
+</head>
+<body>
+<canvas id="myCanvas" width="400" height="400">
+    请升级浏览器！
+</canvas>
+<script src="../lib/webgl-utils.js"></script>
+<script src="../lib/webgl-debug.js"></script>
+<script src="../lib/cuon-utils.js"></script>
+<script>
+    // 顶点着色器（GLSE ES代码）
+    const VSHADER_SOURCE =
+        // x' = x cos b - y sin b
+        // y' = x sin b + y cos b
+        // z' = z
+        'attribute vec4 a_Position;' + //存储限定符
+        'uniform float u_CosB,u_SinB;'+
+        'void main(){' +
+        'gl_Position.x = a_Position.x * u_CosB - a_Position.y * u_SinB;' +
+        'gl_Position.y = a_Position.x * u_SinB + a_Position.y * u_CosB;' +
+        'gl_Position.z = a_Position.z;'+
+        'gl_Position.w = 1.0;' +
+        '}'
+    // 片元着色器
+    const FSHADER_SOURCE =
+        'void main(){' +
+        'gl_FragColor=vec4(1.0,0.0,0.0,1.0);' +//此处代表RGBA
+        '}'
+    const canvas = document.getElementById('myCanvas')
+    // const gl=canvas.getContext('webgl');
+    const gl = getWebGLContext(canvas)
+
+    let ANGLE = 90.0
+
+    if (gl) {
+
+        initShaders(gl, VSHADER_SOURCE, FSHADER_SOURCE)//cuon-utils.js
+
+        let n = initVertexBuffers(gl)
+
+        let radian = Math.PI *ANGLE / 180.0;
+        let cosB=Math.cos(radian);
+        let sinB=Math.sin(radian);
+
+        let u_CosB=gl.getUniformLocation(gl.program,'u_CosB');
+        let u_SinB=gl.getUniformLocation(gl.program,'u_SinB');
+
+        gl.uniform1f(u_CosB,cosB);
+        gl.uniform1f(u_SinB,sinB);
+
+        gl.clearColor(0, 0, 0, 1)
+
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        // gl.drawArrays(gl.POINTS, 0, n);//点
+        // gl.drawArrays(gl.LINES, 0, n);//线段
+        // gl.drawArrays(gl.LINE_STRIP, 0, n);//线条
+        // gl.drawArrays(gl.LINE_LOOP, 0, n);//回路
+        gl.drawArrays(gl.TRIANGLES, 0, n);//三角形
+        // gl.drawArrays(gl.TRIANGLE_STRIP, 0, n);//三角带
+        // gl.drawArrays(gl.TRIANGLE_FAN, 0, n);//三角扇
+
+    } else {
+        console.log('浏览器不支持WebGL')
+    }
+
+    function initVertexBuffers(gl) {
+        const vertices = new Float32Array([
+            0.0, 0.5, -0.5, -0.5, 0.5, -0.5
+        ])
+        let n = 3;
+
+
+        // 创建缓冲区对象
+        const vertexBuffer = gl.createBuffer();
+
+        // 将缓冲区对象绑定到目标
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+
+
+        // 向缓冲区对象写入数据
+        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+
+        const a_Position = gl.getAttribLocation(gl.program, 'a_Position');
+
+
+        // 将缓冲区对象分配给a_Position
+        gl.vertexAttribPointer(a_Position, 2, gl.FLOAT, false, 0, 0);
+
+        // 连接a_Position变量与分配给它的缓冲区对象
+        gl.enableVertexAttribArray(a_Position);
+
+        return n;
+
+    }
+
+
+</script>
+</body>
+</html>
