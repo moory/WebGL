@@ -11,7 +11,12 @@ module.exports.loop = function () {
     born();
 
     for(let k in Game.creeps){
-        work(Game.creeps[k],ROOM.controller)
+        if(k==='Worker5'||k==='Worker0'){
+            work(Game.creeps[k],HOME,0)
+        }else{
+            work(Game.creeps[k],ROOM.controller,1)
+        }
+
     }
 
 }
@@ -29,11 +34,11 @@ const born=()=>{
     }
 }
 
-const work=(c,t)=>{
+const work=(c,t,s)=>{
     if(c.carry.energy < c.carryCapacity) {
         var sources = c.room.find(FIND_SOURCES);
-        if(c.harvest(sources[1]) === ERR_NOT_IN_RANGE) {
-            c.moveTo(sources[1]);
+        if(c.harvest(sources[s]) === ERR_NOT_IN_RANGE) {
+            c.moveTo(sources[s]);
         }
     }
     else {
