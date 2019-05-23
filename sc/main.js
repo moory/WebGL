@@ -9,12 +9,14 @@ module.exports.loop = function () {
     born();
 
     for(let k in Game.creeps){
-        if(k==='Worker5'||k==='Worker6'||k==='Worker7'||k==='Worker8'||k==='Worker9'||k==='Worker10'){
-            upgradeRCL(Game.creeps[k])
-        }else if(k==='Worker2'||k==='Worker3'||k==='Worker4'||k==='Worker11'||k==='Worker12'){
-           build(Game.creeps[k]);
-        }else{
+        if(k==='Worker0'||k==='Worker1'){
             work(Game.creeps[k],HOME,0)
+        }else if(k==='Worker2'||k==='Worker3'||k==='Worker4'||k==='Worker5'){
+           build(Game.creeps[k]);
+        }else if(k==='Worker12'){
+            repair(Game.creeps[k])
+        }else{
+            upgradeRCL(Game.creeps[k])
         }
 
     }
@@ -98,6 +100,35 @@ const upgradeRCL=(c)=>{
         }
     }
 
+}
+
+const repair=(c)=>{
+    for(let k in Game.constructionSites){
+        let target= Game.constructionSites[k];
+        let sources = c.room.find(FIND_SOURCES);
+        if(c.carry.energy===0){
+
+            if(c.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
+                c.moveTo(sources[0]);
+            }
+        }else if(c.carry.energy === c.carryCapacity){
+            if( c.repair(target) === ERR_NOT_IN_RANGE ) {
+                c.moveTo(target);
+            }
+        }else if(calcPath(target,c)>calcPath(sources[0],c)){//离矿更近
+
+            let sources = c.room.find(FIND_SOURCES);
+            if(c.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
+                c.moveTo(sources[0]);
+            }
+        }else{
+            if( c.repair(target) === ERR_NOT_IN_RANGE ) {
+                c.moveTo(target);
+            }
+        }
+
+        return;
+    }
 }
 
 
