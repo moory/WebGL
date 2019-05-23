@@ -1,6 +1,6 @@
 const HOME=Game.spawns['Spawn1'];
 const ROOM=Game.rooms['W14N11'];
-const CREEP_TOTAL=10;
+const CREEP_TOTAL=12;
 const CREEP_NAME='Worker';
 
 
@@ -9,8 +9,10 @@ module.exports.loop = function () {
     born();
 
     for(let k in Game.creeps){
-        if(k==='Worker3'||k==='Worker4'||k==='Worker5'||k==='Worker6'||k==='Worker7'||k==='Worker8'||k==='Worker9'||k==='Worker10'){
+        if(k==='Worker5'||k==='Worker6'||k==='Worker7'||k==='Worker8'||k==='Worker9'||k==='Worker10'){
             upgradeRCL(Game.creeps[k])
+        }else if(k==='Worker2'||k==='Worker3'||k==='Worker4'||k==='Worker11'||k==='Worker12'){
+           build(Game.creeps[k]);
         }else{
             work(Game.creeps[k],HOME,0)
         }
@@ -44,21 +46,37 @@ const work=(c,t,s)=>{
 }
 
 const build=(c)=>{
-    if(c.carry.energy < c.carryCapacity) {
-        if(c.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
-            c.moveTo(sources[0]);
+    for(let k in Game.constructionSites){
+       let target= Game.constructionSites[k];
+        let sources = c.room.find(FIND_SOURCES);
+        if(c.carry.energy===0){
+
+            if(c.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
+                c.moveTo(sources[0]);
+            }
+        }else if(c.carry.energy === c.carryCapacity){
+            if( c.build(target) === ERR_NOT_IN_RANGE ) {
+                c.moveTo(target);
+            }
+        }else if(calcPath(target,c)>calcPath(sources[0],c)){//离矿更近
+
+            let sources = c.room.find(FIND_SOURCES);
+            if(c.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
+                c.moveTo(sources[0]);
+            }
+        }else{
+            if( c.build(target) === ERR_NOT_IN_RANGE ) {
+                c.moveTo(target);
+            }
         }
-    }
-    else {
-        if( c.transfer(Game.spawns['Spawn1'], RESOURCE_ENERGY) === ERR_NOT_IN_RANGE ) {
-            c.moveTo(Game.spawns['Spawn1']);
-        }
+
+        return;
     }
 }
 
 const upgradeRCL=(c)=>{
+    let sources = c.room.find(FIND_SOURCES);
     if(c.carry.energy===0){
-        let sources = c.room.find(FIND_SOURCES);
         if(c.harvest(sources[1]) === ERR_NOT_IN_RANGE) {
             c.moveTo(sources[1]);
         }
@@ -66,7 +84,7 @@ const upgradeRCL=(c)=>{
         if( c.upgradeController(ROOM.controller) === ERR_NOT_IN_RANGE ) {
             c.moveTo(ROOM.controller);
         }
-    }else if(calcPath(42,8,c)>calcPath(44,19,c)){//离矿更近
+    }else if(calcPath(ROOM.controller,c)>calcPath(sources[1],c)){//离矿更近
 
         let sources = c.room.find(FIND_SOURCES);
         if(c.harvest(sources[1]) === ERR_NOT_IN_RANGE) {
@@ -82,9 +100,9 @@ const upgradeRCL=(c)=>{
 
 }
 
-const calcPath=(x,y,c)=>{
 
-    return PathFinder.search(Game.rooms['W14N11'].getPositionAt(x,y),c).cost
+const calcPath=(t,c)=>{
+    return PathFinder.search(t.pos,c).cost
 }
 
 const findCreeps=(name)=>{
@@ -94,4 +112,4 @@ const findCreeps=(name)=>{
 //=========================================
 
 // 修路
-// Game.rooms['W14N11'].createConstructionSite(43,11,STRUCTURE_ROAD);
+// Game.rooms['W14N11'].createConstructionSite(12,16,STRUCTURE_ROAD);
