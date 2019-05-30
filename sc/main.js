@@ -8,11 +8,14 @@ module.exports.loop = function () {
 
     born();
 
+    /*
+    * TODO：应该禁用creep分工机制，转为多面手架构
+    * */
     for(let k in Game.creeps){
-        if(k==='Worker0'||k==='Worker1'){
+        if(k==='Worker0'||k==='Worker1'||k==='Worker3'){
             work(Game.creeps[k],HOME,0)
-        }else if(k==='Worker2'||k==='Worker3'||k==='Worker4'||k==='Worker5'){
-           build(Game.creeps[k]);
+        }else if(k==='Worker2'||k==='Worker4'||k==='Worker5'){
+            build(Game.creeps[k]);
         }else if(k==='Worker12'){
             repair(Game.creeps[k])
         }else{
@@ -62,7 +65,7 @@ const work=(c,t,s)=>{
 * */
 const build=(c)=>{
     for(let k in Game.constructionSites){
-       let target= Game.constructionSites[k];
+        let target= Game.constructionSites[k];
         let source=nearGold(c);
         if(c.carry.energy===0){
 
@@ -173,3 +176,6 @@ const findCreeps=(name)=>{
 
 // 修路
 // Game.rooms['W14N11'].createConstructionSite(12,16,STRUCTURE_ROAD);
+
+//维修
+// MY_TOWER.repair(ROOM.find(FIND_STRUCTURES)[60]);
