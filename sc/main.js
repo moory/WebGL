@@ -7,14 +7,10 @@ const CREEP_NAME='Worker';
 module.exports.loop = function () {
 
     born();
-
-    /*
-    * TODO：应该禁用creep分工机制，转为多面手架构
-    * */
     for(let k in Game.creeps){
-        if(k==='Worker0'||k==='Worker1'||k==='Worker3'){
+        if(k==='Worker0'||k==='Worker1'||k==='Worker3'||k==='Worker4'||k==='Worker5'){
             work(Game.creeps[k],HOME,0)
-        }else if(k==='Worker2'||k==='Worker4'||k==='Worker5'){
+        }else if(k==='Worker2'){
             build(Game.creeps[k]);
         }else if(k==='Worker12'){
             repair(Game.creeps[k])
@@ -30,13 +26,53 @@ module.exports.loop = function () {
 * 爆兵
 * */
 const born=()=>{
-    for(let i=0;i<CREEP_TOTAL;i++){
-        if(!findCreeps(CREEP_NAME+i)){
-            let err_code;
-            err_code=HOME.spawnCreep([WORK, CARRY, MOVE], CREEP_NAME+i);
-            return;
-        }
+    if (!Game.creeps["Worker0"]) {
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'Worker0');
     }
+    if (!Game.creeps["Worker1"]) {
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'Worker1');
+    }
+    if (!Game.creeps["Worker2"]) {
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'Worker2');
+    }
+    if (!Game.creeps["Worker3"]) {
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'Worker3');
+    }
+    if (!Game.creeps["Worker4"]) {
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'Worker4');
+    }
+    if (!Game.creeps["Worker5"]) {
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'Worker5');
+    }
+    if (!Game.creeps["Worker6"]) {
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'Worker6');
+    }
+    if (!Game.creeps["Worker7"]) {
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'Worker7');
+    }
+    if (!Game.creeps["Worker8"]) {
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'Worker8');
+    }
+    if (!Game.creeps["Worker9"]) {
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'Worker9');
+    }
+    if (!Game.creeps["Worker10"]) {
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'Worker10');
+    }
+    if (!Game.creeps["Worker11"]) {
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'Worker11');
+    }
+    if (!Game.creeps["Worker12"]) {
+        Game.spawns['Spawn1'].spawnCreep([WORK, CARRY, MOVE], 'Worker12');
+    }
+    // for(let i=0;i<CREEP_TOTAL;i++){
+    //     if(!findCreeps(CREEP_NAME+i)){
+    //         let err_code;
+    //         err_code=HOME.spawnCreep([WORK, CARRY, MOVE], CREEP_NAME+i);
+    //         console.log(err_code)
+    //         return;
+    //     }
+    // }
 }
 
 /*
@@ -50,10 +86,10 @@ const work=(c,t,s)=>{
         }
     }
     else {
-        if(t.energy===t.energyCapacity){
-            upgradeRCL(c);
-            return;
-        }
+        // if(t.energy===t.energyCapacity){
+        //     upgradeRCL(c);
+        //     return;
+        // }
         if( c.transfer(t, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE ) {
             c.moveTo(t);
         }
